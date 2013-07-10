@@ -1,0 +1,21 @@
+defencoding UTF-8
+escape ^z^z
+bind s
+vbell off
+
+caption always "%{b bw} %?%h%:%t (screen #%n)%?"
+hardstatus alwayslastline "%`%-w%{ub bw}%n %t%{-}%+w %= %{dw} %y/%m/%d %c:%s"
+
+#aterm bindings
+bindkey "^[[c" next
+bindkey "^[[d" prev
+bindkey "^[Oc" next
+bindkey "^[Od" prev
+#putty bindings
+bindkey "^[OC" next
+bindkey "^[OD" prev
+#some other term, don't remember which
+bindkey "^[[5C" next
+bindkey "^[[5D" prev
+termcapinfo xterm "ks=\E[?1l\E:ku=\E[A:kd=\E[B:kl=\E[D:kr=\E[C:kh=\E[5~:kH=\E[F"
+
