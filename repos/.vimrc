@@ -70,6 +70,9 @@ if 1
   NeoBundle 'scrooloose/nerdtree'
   NeoBundle 'itchyny/lightline.vim'
   NeoBundle 'tpope/vim-fugitive'
+"  NeoBundle 'altercation/vim-colors-solarized'
+"  NeoBundle 'sjl/badwolf'
+  NeoBundle 'ujihisa/unite-colorscheme'
 
   if executable('ctags')
     NeoBundle 'vim-scripts/taglist.vim'
@@ -78,7 +81,16 @@ if 1
 
   if version >= 704
     NeoBundle 'Shougo/unite.vim'
-    NeoBundle "Shougo/vimproc"
+    NeoBundle 'Shougo/neoyank.vim'
+    NeoBundle 'Shougo/vimproc.vim', {
+    \ 'build' : {
+    \     'windows' : 'tools\\update-dll-mingw',
+    \     'cygwin' : 'make -f make_cygwin.mak',
+    \     'mac' : 'make',
+    \     'linux' : 'make',
+    \     'unix' : 'gmake',
+    \    },
+    \ }
     NeoBundle "thinca/vim-quickrun"
     NeoBundle "osyo-manga/shabadou.vim"
     NeoBundle "osyo-manga/vim-watchdogs"
@@ -94,12 +106,14 @@ if 1
   "############### basic setting ###############
   syntax on
   set t_Co=256
+  set background=dark
   colorscheme hybrid
   set cursorline
   set cursorcolumn
   set laststatus=2
   if version >= 704
     " 行のハイライト
+    hi Normal ctermbg=none
     hi CursorLineNr ctermbg=4 ctermfg=none
     hi CursorLine ctermbg=232 ctermfg=none
     hi Normal ctermbg=none ctermfg=255
@@ -207,44 +221,17 @@ if 1
     map M <Plug>(easymotion-bd-tl)
     map <Space>j <Plug>(easymotion-j)
     map <Space>k <Plug>(easymotion-k)
-"  " easy-motionのトレーニング
-"  function! StartEMTraining ()
-"    noremap h <Nop>
-"    noremap j <Nop>
-"    noremap k <Nop>
-"    noremap l <Nop>
-"  endfunction
-"  
-"  " easy-motionのトレーニング解除
-"  " ＿人人人人人人人＿
-"  " ＞　非推奨！！　＜
-"  " ￣Y^Y^Y^Y^Y^Y￣
-"  function! StopEMTraining ()
-"    nnoremap h <Left>
-"    nnoremap j gj
-"    nnoremap k gk
-"    nnoremap l <Right>
-"  endfunction
-"  
-"  command! StartEMTraining call StartEMTraining()
-"  command! StopEMTraining call StopEMTraining()
-"  
-"  " デフォルトはトレーニングモード"
-"  call StartEMTraining()
   endif
 
   "############### Unite ###############
   if version >= 704
-    let g:unite_source_history_yank_enable =1
+"    let g:unite_enable_start_insert=1
     let g:unite_source_file_mru_limit = 200
     nmap <Space> [unite]
     nnoremap <silent> [unite]h :<C-u>Unite file_mru<CR>
     nnoremap <silent> [unite]y :<C-u>Unite history/yank<CR>
     nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
     nnoremap <silent> [unite]l :<C-u>Unite tab<CR>
-"    nnoremap <silent> [unite]uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-"    nnoremap <silent> [unite]ur :<C-u>Unite -buffer-name=register register<CR>
-"    nnoremap <silent> [unite]uu :<C-u>Unite buffer file_mru file<CR>
   endif
 
   "############### syntax check ###############
@@ -320,18 +307,22 @@ if 1
           \ 'default' : ''
       \ }
 
-      inoremap <expr><C-g>     neocomplcache#undo_completion()
+      imap <expr><up> neocomplcache#cancel_popup() . "\<up>"
+      imap <expr><down> neocomplcache#cancel_popup() . "\<down>"
+      imap <expr><left> neocomplcache#cancel_popup() . "\<left>"
+      imap <expr><right> neocomplcache#cancel_popup() . "\<right>"
+      imap <expr><C-l> neocomplcache#cancel_popup() . "\<right>"
+
+      inoremap <expr><C-g>  neocomplcache#cancel_popup()
+      inoremap <expr><nul>  pumvisible() ? "\<C-n>" : neocomplcache#start_manual_complete()
+      inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+      inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
 
       " <CR>: close popup and save indent.
       inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
       function! s:my_cr_function()
         return neocomplcache#smart_close_popup() . "\<CR>"
       endfunction
-
-      inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-      inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
-      inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-      inoremap <expr><C-y>  neocomplcache#close_popup()
     endif
   endif
   
