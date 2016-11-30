@@ -5,6 +5,7 @@
 [core]
   pager = LESS=-R less
   ui = auto
+  editor = vi
 
 [diff]
   tool = vimdiff
