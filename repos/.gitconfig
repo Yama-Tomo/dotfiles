@@ -1,0 +1,20 @@
+[user]
+  name = Yamatomo
+  email = mazda13bturbo@gmail.com
+
+[core]
+  pager = LESS=-R less
+  ui = auto
+
+[diff]
+  tool = vimdiff
+
+[difftool]
+  prompt = false
+
+[alias]
+  st = status
+  co = checkout
+  br = branch
+  fe = fetch
+  l = log

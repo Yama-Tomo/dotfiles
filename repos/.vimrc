@@ -11,6 +11,8 @@ set expandtab
 set autoindent
 set wildmenu
 set ambiwidth=double
+set ignorecase
+set smartcase
 
 set grepprg=grep\ -nH
 autocmd InsertLeave * set nopaste
@@ -26,15 +28,17 @@ inoremap <C-h> <Left>
 inoremap <C-l> <Right>
 inoremap <C-a> <Home>
 inoremap <C-e> <End>
-inoremap <C-d> <Delete>
 inoremap {<Enter> {}<Left><CR><ESC><S-o>
 inoremap [ []<Left>
+inoremap <C-w> <C-o>w
+inoremap <C-b> <C-o>b
 
 " tabページ
 nnoremap <C-n> gt
 nnoremap <C-p> gT
 nnoremap fn :<C-u>tabnew<CR>
 nnoremap fw :<C-u>q<CR>
+nnoremap fo :<C-u>tabo<CR>:<C-u>q<CR>
 
 " window分割
 nnoremap fs :<C-u>sp<CR>
@@ -67,12 +71,15 @@ if 1
   NeoBundleFetch 'Shougo/neobundle.vim'
   NeoBundle 'Shougo/neomru.vim'
   NeoBundle 'w0ng/vim-hybrid'
-  NeoBundle 'scrooloose/nerdtree'
+  NeoBundle 'mkarmona/colorsbox'
+  NeoBundle 'michalbachowski/vim-wombat256mod'
+"  NeoBundle 'scrooloose/nerdtree'
   NeoBundle 'itchyny/lightline.vim'
   NeoBundle 'tpope/vim-fugitive'
 "  NeoBundle 'altercation/vim-colors-solarized'
 "  NeoBundle 'sjl/badwolf'
   NeoBundle 'ujihisa/unite-colorscheme'
+  NeoBundle 'elixir-lang/vim-elixir'
 
   if executable('ctags')
     NeoBundle 'vim-scripts/taglist.vim'
@@ -81,6 +88,7 @@ if 1
 
   if version >= 704
     NeoBundle 'Shougo/unite.vim'
+    NeoBundle 'Shougo/vimfiler'
     NeoBundle 'Shougo/neoyank.vim'
     NeoBundle 'Shougo/vimproc.vim', {
     \ 'build' : {
@@ -111,6 +119,7 @@ if 1
   set cursorline
   set cursorcolumn
   set laststatus=2
+  set hls
   if version >= 704
     " 行のハイライト
     hi Normal ctermbg=none
@@ -127,17 +136,13 @@ if 1
   au BufNewFile,BufRead *.tpl :source $VIMRUNTIME/ftplugin/html.vim
   au BufNewFile,BufRead *.tpl let b:match_words .= ',{\s*if\>:{\s*elseif\>:{\s*else\>:{\s*/if\>,{\s*foreach\>:{\s*foreachelse\>:{\s*/foreach\>'
 
-  nnoremap <silent> <space>e :NERDTreeToggle<CR>
-  nnoremap <silent> <space>n :NERDTreeFind<CR>
-  autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-  
   " load ctags
   if filereadable(expand('.git/tags'))
     set tags+=.git/tags
   endif
   
   " pasteした時にインデントさせない bracketed paste mode 対応のターミナルしか対応してない
-  if &term =~ "xterm"
+  if &term =~ "xterm" || &term == "xterm-256color" 
     let &t_SI .= "\eP\e[?2004h\e\\"
     let &t_EI .= "\eP\e[?2004l\e\\"
     let &pastetoggle = "\e[201~"
@@ -212,26 +217,64 @@ if 1
     let g:EasyMotion_keys='hjklasdfgyuiopqwertnmzxcvbHJKLASDFGYUIOPQWERTNMZXCVB'
     let g:EasyMotion_grouping=1
     let g:EasyMotion_smartcase = 1
-    vmap t <Plug>(easymotion-s2)
-    nmap t <Plug>(easymotion-s2)
-    vmap T <Plug>(easymotion-t2)
-    nmap T <Plug>(easymotion-t2)
-    nmap g/ <Plug>(easymotion-sn)
-    map m <Plug>(easymotion-bd-fl)
-    map M <Plug>(easymotion-bd-tl)
-    map <Space>j <Plug>(easymotion-j)
-    map <Space>k <Plug>(easymotion-k)
+    let g:EasyMotion_enter_jump_first = 1
+    let g:EasyMotion_space_jump_first = 1    
+
+    vmap        t <Plug>(easymotion-s)
+    nmap        t <Plug>(easymotion-s)
+    imap <C-f> <C-o><Plug>(easymotion-s)
+
+    map ; <Plug>(easymotion-next)
+    map , <Plug>(easymotion-prev)
+
+    map         m <Plug>(easymotion-bd-fl)
+    imap <C-v> <C-o><Plug>(easymotion-bd-fl)
+
+    map  <Space>j <Plug>(easymotion-j)
+"""""""""""    imap <Space>j <C-o><Plug>(easymotion-j)
+    map  <Space>k <Plug>(easymotion-k)
+"""""""""""    imap <Space>k <C-o><Plug>(easymotion-k)
   endif
 
   "############### Unite ###############
   if version >= 704
 "    let g:unite_enable_start_insert=1
     let g:unite_source_file_mru_limit = 200
+    let g:vimfiler_as_default_explorer = 1
+"    let g:vimfiler_edit_action = 'tabopen'
+    let g:vimfiler_tree_opened_icon = "▾"
+    let g:vimfiler_tree_closed_icon = "▸"
+    let g:vimfiler_tree_leaf_icon = ' '
+    let g:vimfiler_safe_mode_by_default = 0
+    let g:vimfiler_enable_auto_cd = 1
+
     nmap <Space> [unite]
     nnoremap <silent> [unite]h :<C-u>Unite file_mru<CR>
     nnoremap <silent> [unite]y :<C-u>Unite history/yank<CR>
     nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
     nnoremap <silent> [unite]l :<C-u>Unite tab<CR>
+    nnoremap <silent> [unite]f :<C-u>Unite find<CR>
+    nnoremap <silent> [unite]g :<C-u>Unite grep<CR>
+
+    autocmd FileType unite call s:_yamatomo_unite_my_settings()
+    function! s:_yamatomo_unite_my_settings()"{{{
+        "入力モードのときjjでノーマルモードに移動
+        imap <buffer> jj <Plug>(unite_insert_leave)
+        "ctrl+jで縦に分割して開く
+        nnoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+        inoremap <silent> <buffer> <expr> <C-j> unite#do_action('split')
+        "ctrl+jで横に分割して開く
+        nnoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+        inoremap <silent> <buffer> <expr> <C-l> unite#do_action('vsplit')
+        "ctrl+oでその場所に開く
+        nnoremap <silent> <buffer> <expr> <C-o> unite#do_action('open')
+        inoremap <silent> <buffer> <expr> <C-o> unite#do_action('open')
+    endfunction"}}}
+
+    nnoremap <silent> <space>e :VimFilerExplorer -toggle<CR>
+    nnoremap <silent> <space>n :VimFilerExplorer -find<CR>
+    autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'vimfiler') | q | endif
+    autocmd FileType vimfiler nnoremap <silent><buffer><expr> tn vimfiler#do_action('tabopen')
   endif
 
   "############### syntax check ###############
@@ -279,14 +322,14 @@ if 1
           \ 'default' : ''
       \ }
 
-      imap <expr><up> neocomplete#cancel_popup() . "\<up>"
-      imap <expr><down> neocomplete#cancel_popup() . "\<down>"
-      imap <expr><left> neocomplete#cancel_popup() . "\<left>"
-      imap <expr><right> neocomplete#cancel_popup() . "\<right>"
-      imap <expr><C-l> neocomplete#cancel_popup() . "\<right>"
-
-      inoremap <expr><C-g>  neocomplete#cancel_popup()
-      inoremap <expr><nul>  pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
+"      imap <expr><up> neocomplete#cancel_popup() . "\<up>"
+"      imap <expr><down> neocomplete#cancel_popup() . "\<down>"
+"      imap <expr><left> neocomplete#cancel_popup() . "\<left>"
+"      imap <expr><right> neocomplete#cancel_popup() . "\<right>"
+"      imap <expr><C-l> neocomplete#cancel_popup() . "\<right>"
+"
+"      inoremap <expr><C-g>  neocomplete#cancel_popup()
+"      inoremap <expr><nul>  pumvisible() ? "\<C-n>" : neocomplete#start_manual_complete()
       inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
       inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>" 
 
