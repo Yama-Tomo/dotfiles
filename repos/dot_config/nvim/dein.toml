@@ -188,8 +188,12 @@ repo = 'autozimu/LanguageClient-neovim'
 rev = 'next'
 build = 'bash install.sh'
 hook_add = '''
-set hidden
-let g:LanguageClient_serverCommands = {
+  set hidden
+  let g:LanguageClient_autoStart = 1
+  let g:LanguageClient_serverCommands = {
     \ 'vue': ['vls'],
+    \ 'typescript': ['javascript-typescript-stdio'],
     \ }
+
+  nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 '''

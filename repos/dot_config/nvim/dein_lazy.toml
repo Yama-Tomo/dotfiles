@@ -39,6 +39,28 @@ repo = 'tpope/vim-endwise'
 on_ft = ['ruby']
 
 [[plugins]]
+repo = 'posva/vim-vue'
+on_ft = 'vue'
+hook_add = '''
+  setlocal iskeyword+=$
+  setlocal iskeyword+=-
+  autocmd FileType vue syntax sync fromstart
+'''
+
+[[plugins]]
+repo = 'digitaltoad/vim-pug'
+on_ft = 'vue'
+
+[[plugins]]
+repo = 'leafgarland/typescript-vim'
+on_ft = ['typescript', 'vue']
+
+[[plugins]]
+repo = 'mhartington/nvim-typescript'
+depends = 'deoplete.nvim'
+on_ft = ['typescript', 'vue']
+
+[[plugins]]
 repo = 'janko-m/vim-test'
 hook_add = '''
   nnoremap tn :TestNearest<cr>
@@ -63,11 +85,3 @@ hook_add = '''
   let g:test#transformation = 'docker'
 '''
 
-[[plugins]]
-repo = 'posva/vim-vue'
-on_ft = 'vue'
-hook_add = '''
-  setlocal iskeyword+=$
-  setlocal iskeyword+=-
-  autocmd FileType vue syntax sync fromstart
-'''
