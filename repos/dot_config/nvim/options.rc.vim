@@ -14,16 +14,14 @@ set smartindent
 
 colorscheme hybrid
 
-if version >= 704
-  hi Normal ctermbg=none
-  hi CursorLineNr ctermbg=4 ctermfg=none
-  hi CursorLine ctermbg=232 ctermfg=none
-  hi Normal ctermbg=none ctermfg=255
-  hi Comment ctermbg=none ctermfg=246
-  hi LineNr ctermbg=none ctermfg=246
-  hi Visual ctermbg=242 guibg=242
-  hi Search ctermbg=169 ctermfg=white
-endif
+hi Normal ctermbg=none
+hi CursorLineNr ctermbg=4 ctermfg=none
+hi CursorLine ctermbg=0 ctermfg=none
+hi Normal ctermbg=none ctermfg=255
+hi Comment ctermbg=none ctermfg=246
+hi LineNr ctermbg=none ctermfg=246
+hi Visual ctermbg=242 guibg=242
+hi Search ctermbg=169 ctermfg=white
 
 let &t_SI = "\e]50;CursorShape=1\x7"
 let &t_EI = "\e]50;CursorShape=0\x7"

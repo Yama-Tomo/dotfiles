@@ -52,7 +52,7 @@ hook_add = '''
       let container_id = system('docker ps --filter name=$APP_CONTAINER_NAME -q')
 
       if container_id != ''
-        return 'docker exec -t ' . container_id . ' ' . a:cmd
+        return 'docker exec -it ' . container_id . ' ' . a:cmd
       endif
     endif
 

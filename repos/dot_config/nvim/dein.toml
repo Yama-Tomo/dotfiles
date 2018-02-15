@@ -5,13 +5,31 @@ repo = 'Shougo/dein.vim'
 repo = 'w0ng/vim-hybrid'
 
 [[plugins]]
+repo = 'Shougo/denite.nvim'
+depends = 'neoyank.vim'
+hook_add = '''
+  call denite#custom#option('default', 'direction', 'top')
+  call denite#custom#option('default', 'prompt', '>')
+
+  call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
+  call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
+
+  call denite#custom#map('insert', '<C-j>', '<denite:do_action:split>', 'noremap')
+  call denite#custom#map('insert', '<C-k>', '<denite:do_action:vsplit>', 'noremap')
+
+  nnoremap <silent> <space>b :<C-u>Denite buffer<CR>
+  nnoremap <silent> <space>y :<C-u>Denite neoyank<CR>
+  nnoremap <silent> <space>h :<C-u>Denite file_old<CR>
+'''
+
+# deniteがタブがfilerをサポートするまで暫定利用
+[[plugins]]
+repo = 'Shougo/neoyank.vim'
+
+[[plugins]]
 repo = 'Shougo/unite.vim'
 hook_add = '''
   nmap <Space> [unite]
-  nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
-  nnoremap <silent> [unite]h :<C-u>Unite file_mru<CR>
-  nnoremap <silent> [unite]y :<C-u>Unite history/yank<CR>
-  nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
   nnoremap <silent> [unite]l :<C-u>Unite tab<CR>
 '''
 
