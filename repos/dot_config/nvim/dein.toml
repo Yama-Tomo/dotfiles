@@ -1,0 +1,177 @@
+[[plugins]]
+repo = 'Shougo/dein.vim'
+
+[[plugins]]
+repo = 'w0ng/vim-hybrid'
+
+[[plugins]]
+repo = 'Shougo/unite.vim'
+hook_add = '''
+  nmap <Space> [unite]
+  nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
+  nnoremap <silent> [unite]h :<C-u>Unite file_mru<CR>
+  nnoremap <silent> [unite]y :<C-u>Unite history/yank<CR>
+  nnoremap <silent> [unite]b :<C-u>Unite buffer<CR>
+  nnoremap <silent> [unite]l :<C-u>Unite tab<CR>
+'''
+
+[[plugins]]
+repo = 'Shougo/vimfiler.vim'
+depends = 'unite.vim'
+hook_add = '''
+  let g:vimfiler_as_default_explorer = 1
+  let g:vimfiler_tree_opened_icon = "▾"
+  let g:vimfiler_tree_closed_icon = "▸"
+  let g:vimfiler_tree_leaf_icon = ' '
+  let g:vimfiler_safe_mode_by_default = 0
+  let g:vimfiler_enable_auto_cd = 1
+
+  nnoremap <silent> <space>e :VimFilerExplorer -toggle<CR>
+  nnoremap <silent> <space>n :VimFilerExplorer -find<CR>
+  autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'vimfiler') | q | endif
+  autocmd FileType vimfiler nnoremap <silent><buffer><expr> tn vimfiler#do_action('tabopen')
+'''
+
+[[plugins]]
+repo = 'itchyny/lightline.vim'
+
+hook_add = '''
+  let g:lightline = {
+    \ 'colorscheme': 'wombat',
+    \ 'active': {
+    \   'left': [ [ 'mode', 'paste' ],
+    \             [ 'fugitive', 'filename' ] ]
+    \ },
+    \ 'component_function': {
+    \   'fugitive': 'LightLineFugitive',
+    \   'readonly': 'LightLineReadonly',
+    \   'modified': 'LightLineModified',
+    \   'filename': 'LightLineFilename'
+    \ },
+  \ }
+  
+  function! LightLineModified()
+    if &filetype == "help"
+      return ""
+    elseif &modified
+      return "+"
+    elseif &modifiable
+      return ""
+    else
+      return ""
+    endif
+  endfunction
+  
+  function! LightLineReadonly()
+    if &filetype == "help"
+      return ""
+    elseif &readonly
+      return "(ro)"
+    else
+      return ""
+    endif
+  endfunction
+  
+  function! LightLineFugitive()
+    return exists('*fugitive#head') ? fugitive#head() : ''
+  endfunction
+  
+  function! LightLineFilename()
+    return ('' != LightLineReadonly() ? LightLineReadonly() . ' ' : '') .
+         \ ('' != expand('%:p') ? expand('%:p') : '[No Name]') .
+         \ ('' != LightLineModified() ? ' ' . LightLineModified() : '')
+  endfunction
+'''
+
+[[plugins]]
+repo = 'Shougo/neosnippet-snippets'
+
+[[plugins]]
+repo = 'Shougo/neosnippet.vim'
+depends = ['neosnippet-snippets']
+hook_add = '''
+  imap <C-a> <Plug>(neosnippet_expand_or_jump)
+  smap <C-a> <Plug>(neosnippet_expand_or_jump)
+  xmap <C-a> <Plug>(neosnippet_expand_target)
+  let g:neosnippet#enable_snipmate_compatibility = 1
+  let g:neosnippet#enable_completed_snippet = 1
+  let g:neosnippet#expand_word_boundary = 1
+'''
+
+[[plugins]]
+repo = 'szw/vim-tags'
+hook_add = '''
+  if executable('ctags')
+    function! GetDocker()
+      if $APP_CONTAINER_NAME != ''
+        let container_id = system('docker ps --filter name=$APP_CONTAINER_NAME -q')
+
+        if container_id != ''
+          return 'docker exec -t ' . container_id . ' '
+        endif
+      endif
+
+      return ''
+    endfunction
+
+    let g:vim_tags_auto_generate = 1
+    let g:vim_tags_project_tags_command = "{CTAGS} -R {OPTIONS} {DIRECTORY} 2>/dev/null"
+
+    let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `" . GetDocker() . " bundle show --paths` 2>/dev/null"
+    nnoremap <space>] :<C-u>tab stj <C-R>=expand('<cword>')<CR><CR>
+  endif
+'''
+
+[[plugins]]
+repo = 'kassio/neoterm'
+rev = '2d8146d0d44df7e11d23068e43341128f4b8ffd7'
+hook_add = '''
+  nnoremap <silent> ,rf :TREPLSendFile<cr>
+  nnoremap <silent> ,rl :TREPLSendLine<cr>
+  vnoremap <silent> ,rl :TREPLSendSelection<cr>
+  nnoremap <silent> te :Ttoggle<cr>
+  nnoremap <silent> vs :terminal<cr>
+  tnoremap <silent> <C-[> <C-\><C-n>
+'''
+
+[[plugins]]
+repo = 'easymotion/vim-easymotion'
+hook_add = '''
+  let g:EasyMotion_do_mapping = 0
+  let g:EasyMotion_keys='hjklasdfgyuiopqwertnmzxcvbHJKLASDFGYUIOPQWERTNMZXCVB'
+  let g:EasyMotion_grouping=1
+  let g:EasyMotion_smartcase = 1
+  let g:EasyMotion_enter_jump_first = 1
+  let g:EasyMotion_space_jump_first = 1    
+
+  vmap          t <Plug>(easymotion-s)
+  nmap          t <Plug>(easymotion-s)
+  imap <C-f> <C-o><Plug>(easymotion-s)
+
+  map ; <Plug>(easymotion-next)
+  map , <Plug>(easymotion-prev)
+
+  map           m <Plug>(easymotion-bd-fl)
+  imap <C-v> <C-o><Plug>(easymotion-bd-fl)
+
+  map  <Space>j <Plug>(easymotion-j)
+  map  <Space>k <Plug>(easymotion-k)
+'''
+
+[[plugins]]
+repo = 'w0rp/ale'
+hook_add = '''
+  let g:ale_sign_error = '>>'
+  let g:ale_sign_warning = '--'
+'''
+
+[[plugins]]
+repo = 'autozimu/LanguageClient-neovim'
+rev = 'next'
+build = 'bash install.sh'
+hook_add = '''
+set hidden
+let g:LanguageClient_serverCommands = {
+    \ 'vue': ['vls'],
+    \ }
+'''

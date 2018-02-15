@@ -1,0 +1,73 @@
+[[plugins]]
+repo = 'Shougo/deoplete.nvim'
+on_i = 1
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+  " <TAB>: completion.
+  inoremap <silent><expr> <TAB>
+        \ pumvisible() ? "\<C-n>" :
+        \ <SID>check_back_space() ? "\<TAB>" :
+        \ deoplete#manual_complete()
+  function! s:check_back_space() abort "{{{
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~ '\s'
+  endfunction"}}}
+
+  " <S-TAB>: completion back.
+  inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<C-h>"
+
+  " <BS>: close popup and delete backword char.
+  inoremap <expr><BS> deoplete#smart_close_popup()."\<C-h>"
+
+  " <CR>: close popup and save indent.
+  inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+  function! s:my_cr_function()
+    return pumvisible() ? deoplete#mappings#close_popup() : "\n"
+  endfunction
+
+  let g:deoplete#enable_refresh_always = 0
+  let g:deoplete#enable_camel_case = 1
+  let g:deoplete#skip_chars = ['(', ')']
+'''
+
+[[plugins]]
+repo = 'fishbullet/deoplete-ruby'
+on_ft = ['ruby']
+
+[[plugins]]
+repo = 'tpope/vim-endwise'
+on_ft = ['ruby']
+
+[[plugins]]
+repo = 'janko-m/vim-test'
+hook_add = '''
+  nnoremap tn :TestNearest<cr>
+  nnoremap tf :TestFile<cr>
+
+  let g:test#strategy = 'neoterm'
+  let g:test#ruby#rspec#executable = 'rspec'
+ 
+  function! s:docker_transformer(cmd) abort
+    if $APP_CONTAINER_NAME != ''
+      let container_id = system('docker ps --filter name=$APP_CONTAINER_NAME -q')
+
+      if container_id != ''
+        return 'docker exec -t ' . container_id . ' ' . a:cmd
+      endif
+    endif
+
+    return 'bundle exec ' . a:cmd
+  endfunction
+  
+  let g:test#custom_transformations = {'docker': function('s:docker_transformer')}
+  let g:test#transformation = 'docker'
+'''
+
+[[plugins]]
+repo = 'posva/vim-vue'
+on_ft = 'vue'
+hook_add = '''
+  setlocal iskeyword+=$
+  setlocal iskeyword+=-
+  autocmd FileType vue syntax sync fromstart
+'''
