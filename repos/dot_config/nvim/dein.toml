@@ -17,9 +17,9 @@ hook_add = '''
   call denite#custom#map('insert', '<C-j>', '<denite:do_action:split>', 'noremap')
   call denite#custom#map('insert', '<C-k>', '<denite:do_action:vsplit>', 'noremap')
 
-  nnoremap <silent> <space>b :<C-u>Denite buffer<CR>
-  nnoremap <silent> <space>y :<C-u>Denite neoyank<CR>
-  nnoremap <silent> <space>h :<C-u>Denite file_old<CR>
+  nnoremap <silent> <space>b :<C-u>Denite buffer -highlight-mode-insert=Search<CR>
+  nnoremap <silent> <space>y :<C-u>Denite neoyank -highlight-mode-insert=Search<CR>
+  nnoremap <silent> <space>h :<C-u>Denite file_old -highlight-mode-insert=Search<CR>
 '''
 
 # deniteがタブがfilerをサポートするまで暫定利用
@@ -190,6 +190,10 @@ build = 'bash install.sh'
 hook_add = '''
   set hidden
   let g:LanguageClient_autoStart = 1
+  " vue language server javascript-typescript-language-server requirements
+  "   $ npm i -g tsc javascript-typescript-langserver vue-language-server
+  "   ### set experimentalDecorators option. for decorators error
+  "   $ echo '{ "compilerOptions": { "experimentalDecorators": true } }' > ~/tsconfig.json
   let g:LanguageClient_serverCommands = {
     \ 'vue': ['vls'],
     \ 'typescript': ['javascript-typescript-stdio'],
