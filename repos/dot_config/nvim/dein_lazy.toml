@@ -85,3 +85,6 @@ hook_add = '''
   let g:test#transformation = 'docker'
 '''
 
+[[plugins]]
+repo = 'slim-template/vim-slim'
+on_ft = 'slim'

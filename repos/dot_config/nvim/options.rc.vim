@@ -27,3 +27,4 @@ let &t_SI = "\e]50;CursorShape=1\x7"
 let &t_EI = "\e]50;CursorShape=0\x7"
 
 autocmd MyAutoCmd FileType ruby set sw=2
+autocmd  BufRead,BufNewFile *.jbuilder set ft=ruby

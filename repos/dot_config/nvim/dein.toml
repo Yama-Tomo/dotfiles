@@ -11,11 +11,11 @@ hook_add = '''
   call denite#custom#option('default', 'direction', 'top')
   call denite#custom#option('default', 'prompt', '>')
 
-  call denite#custom#map('insert', '<C-n>', '<denite:move_to_next_line>', 'noremap')
-  call denite#custom#map('insert', '<C-p>', '<denite:move_to_previous_line>', 'noremap')
+  call denite#custom#map('insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
+  call denite#custom#map('insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
 
-  call denite#custom#map('insert', '<C-j>', '<denite:do_action:split>', 'noremap')
-  call denite#custom#map('insert', '<C-k>', '<denite:do_action:vsplit>', 'noremap')
+  call denite#custom#map('insert', '<C-s>', '<denite:do_action:split>', 'noremap')
+  call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
 
   nnoremap <silent> <space>b :<C-u>Denite buffer -highlight-mode-insert=Search<CR>
   nnoremap <silent> <space>y :<C-u>Denite neoyank -highlight-mode-insert=Search<CR>
@@ -196,7 +196,7 @@ hook_add = '''
   "   $ echo '{ "compilerOptions": { "experimentalDecorators": true } }' > ~/tsconfig.json
   let g:LanguageClient_serverCommands = {
     \ 'vue': ['vls'],
-    \ 'typescript': ['javascript-typescript-stdio'],
+    \ 'typescript': ['javascript-typescript-stdio']
     \ }
 
   nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
