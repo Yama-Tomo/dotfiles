@@ -17,6 +17,9 @@ hook_add = '''
   call denite#custom#map('insert', '<C-s>', '<denite:do_action:split>', 'noremap')
   call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
 
+  call denite#custom#source('file_old', 'matchers', ['matcher_regexp'])
+  call denite#custom#source('buffer', 'matchers', ['matcher_regexp'])
+
   nnoremap <silent> <space>b :<C-u>Denite buffer -highlight-mode-insert=Search<CR>
   nnoremap <silent> <space>y :<C-u>Denite neoyank -highlight-mode-insert=Search<CR>
   nnoremap <silent> <space>h :<C-u>Denite file_old -highlight-mode-insert=Search<CR>
@@ -43,9 +46,10 @@ hook_add = '''
   let g:vimfiler_tree_leaf_icon = ' '
   let g:vimfiler_safe_mode_by_default = 0
   let g:vimfiler_enable_auto_cd = 1
+  let g:vimfiler_force_overwrite_statusline = 0
 
   nnoremap <silent> <space>e :VimFilerExplorer -toggle<CR>
-  nnoremap <silent> <space>n :VimFilerExplorer -find<CR>
+  nnoremap <silent> <space>n :VimFilerExplorer -find -status<CR>
   autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'vimfiler') | q | endif
   autocmd FileType vimfiler nnoremap <silent><buffer><expr> tn vimfiler#do_action('tabopen')
 '''

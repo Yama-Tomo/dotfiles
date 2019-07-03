@@ -80,6 +80,10 @@ if 1
 "  NeoBundle 'sjl/badwolf'
   NeoBundle 'ujihisa/unite-colorscheme'
   NeoBundle 'elixir-lang/vim-elixir'
+  NeoBundle 'slim-template/vim-slim'
+  NeoBundle 'kchmck/vim-coffee-script'
+  NeoBundle 'leafgarland/typescript-vim'
+  NeoBundle 'udalov/kotlin-vim'
 
   if executable('ctags')
     NeoBundle 'vim-scripts/taglist.vim'
@@ -128,13 +132,14 @@ if 1
     hi Normal ctermbg=none ctermfg=255
     hi Comment ctermbg=none ctermfg=246
     hi LineNr ctermbg=none ctermfg=246
-    hi Visual ctermbg=242 guibg=242
+    "    hi Visual ctermbg=240 guibg=240
     hi Search ctermbg=167 ctermfg=white
   endif
  
   " for Smarty template file.
   au BufNewFile,BufRead *.tpl :source $VIMRUNTIME/ftplugin/html.vim
   au BufNewFile,BufRead *.tpl let b:match_words .= ',{\s*if\>:{\s*elseif\>:{\s*else\>:{\s*/if\>,{\s*foreach\>:{\s*foreachelse\>:{\s*/foreach\>'
+  autocmd BufNewFile,BufRead *.vue setlocal filetype=typescript
 
   " load ctags
   if filereadable(expand('.git/tags'))
