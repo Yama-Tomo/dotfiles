@@ -5,7 +5,8 @@
 [core]
   pager = LESS=-R less
   ui = auto
-  editor = vi
+  editor = vim
+  whitespace = cr-at-eol
 
 [diff]
   tool = vimdiff
@@ -14,8 +15,11 @@
   prompt = false
 
 [alias]
+  d = diff
   st = status
   co = checkout
   br = branch
   fe = fetch
+  cm = commit
+  cy = cherry-pick
   l = log
