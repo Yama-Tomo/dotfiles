@@ -12,16 +12,15 @@ fi
 for file in $files
 do
   file=`basename $file`
-  if [ "$file" = "." -o "$file" = ".." ]; then
+
+  if [ "${file}" = "nvim" ]; then
+    ${current}/repos/dot_config/nvim/setup.sh
     continue
   fi
 
-  if [ ! -f "$source/$file" ]; then
+  if [ "$file" = "." -o "$file" = ".." -o ! -f "$source/$file" ]; then
     continue
   fi
-  
-  #echo $file
-  #continue
 
   if [ ! -L $dest/$file ]; then
     echo "######### $file ###########"
