@@ -11,7 +11,21 @@ alias ll='ls -l'
 
 PATH="/usr/local/bin:$PATH" 
 
+# ディストリビューションごとの設定
+if [ "$(uname -r | grep MANJARO)" != "" ]; then
+  if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+    source /etc/profile.d/vte.sh
+  fi
+
+  alias slp="sudo systemctl hibernate"
+fi
+
 # bash completion
+for file in git docker docker-compose
+do
+  [ -e ~/.config/bash_completion.d/${file} ] && . ~/.config/bash_completion.d/${file}
+done
+
 if [ ! -f /etc/bash_completion ]; then
   if [ -f ~/.ssh/known_hosts ]; then 
     _yamatomo_known_hosts() {
