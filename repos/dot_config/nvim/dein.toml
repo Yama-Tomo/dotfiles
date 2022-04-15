@@ -8,33 +8,52 @@ repo = 'w0ng/vim-hybrid'
 repo = 'Shougo/denite.nvim'
 depends = 'neoyank.vim'
 hook_add = '''
-  call denite#custom#option('default', 'direction', 'top')
-  call denite#custom#option('default', 'prompt', '>')
+  call dein#add('w1mvy/vim-denite-tab') " add tab plugin
 
-  call denite#custom#map('insert', '<C-j>', '<denite:move_to_next_line>', 'noremap')
-  call denite#custom#map('insert', '<C-k>', '<denite:move_to_previous_line>', 'noremap')
+  autocmd FileType denite call s:denite_mappings()
+  function! s:denite_mappings() abort
+    nnoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
+    nnoremap <silent><buffer><expr> <Tab> denite#do_map('choose_action')
+    nnoremap <silent><buffer><expr> d denite#do_map('do_action', 'delete')
+    nnoremap <silent><buffer><expr> p denite#do_map('do_action', 'preview')
+    nnoremap <silent><buffer><expr> q denite#do_map('quit')
+    nnoremap <silent><buffer><expr> i denite#do_map('open_filter_buffer') " 絞り込みをするためのモード切り替え
+    nnoremap <silent><buffer><expr> <Space> denite#do_map('toggle_select').'j' " 複数アイテムを選択
+  endfunction
 
-  call denite#custom#map('insert', '<C-s>', '<denite:do_action:split>', 'noremap')
-  call denite#custom#map('insert', '<C-v>', '<denite:do_action:vsplit>', 'noremap')
+  " filterしているときでもカーソル移動とenter押下を行える
+  autocmd FileType denite-filter call s:denite_filter_my_settings()
+  function! s:denite_filter_my_settings() abort
+    inoremap <silent><buffer><expr> <CR> denite#do_map('do_action')
+    inoremap <silent><buffer><expr> <C-j> denite#increment_parent_cursor(1)
+    inoremap <silent><buffer><expr> <C-k> denite#increment_parent_cursor(-1)
+  endfunction
 
-  call denite#custom#source('file_old', 'matchers', ['matcher_regexp'])
-  call denite#custom#source('buffer', 'matchers', ['matcher_regexp'])
+  let s:denite_win_width_percent = 0.9
+  let s:denite_win_height_percent = 0.5
+  let s:vvv = v:true
+  call denite#custom#option('default', {
+      \ 'split': 'floating',
+      \ 'winwidth': float2nr(&columns * s:denite_win_width_percent),
+      \ 'wincol': float2nr((&columns - (&columns * s:denite_win_width_percent)) / 2),
+      \ 'winheight': float2nr(&lines * s:denite_win_height_percent),
+      \ 'winrow': float2nr((&lines - (&lines * s:denite_win_height_percent)) / 1.3),
+      \ 'highlight_matched_char': "None",
+      \ 'highlight_matched_range': "Search",
+      \ 'match_highlight': v:true
+      \ })
 
-  nnoremap <silent> <space>b :<C-u>Denite buffer -highlight-mode-insert=Search<CR>
-  nnoremap <silent> <space>y :<C-u>Denite neoyank -highlight-mode-insert=Search<CR>
-  nnoremap <silent> <space>h :<C-u>Denite file_old -highlight-mode-insert=Search<CR>
+  nnoremap <silent> <space>b :<C-u>Denite buffer <CR>
+  nnoremap <silent> <space>l :<C-u>Denite tab  <CR>
+  nnoremap <silent> <space>y :<C-u>Denite neoyank <CR>
+  nnoremap <silent> <space>h :<C-u>Denite file/old <CR>
 '''
 
-# deniteがタブがfilerをサポートするまで暫定利用
 [[plugins]]
 repo = 'Shougo/neoyank.vim'
 
 [[plugins]]
 repo = 'Shougo/unite.vim'
-hook_add = '''
-  nmap <Space> [unite]
-  nnoremap <silent> [unite]l :<C-u>Unite tab<CR>
-'''
 
 [[plugins]]
 repo = 'Shougo/vimfiler.vim'
@@ -56,7 +75,6 @@ hook_add = '''
 
 [[plugins]]
 repo = 'itchyny/lightline.vim'
-
 hook_add = '''
   let g:lightline = {
     \ 'colorscheme': 'wombat',
@@ -106,21 +124,6 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'Shougo/neosnippet-snippets'
-
-[[plugins]]
-repo = 'Shougo/neosnippet.vim'
-depends = ['neosnippet-snippets']
-hook_add = '''
-  imap <C-a> <Plug>(neosnippet_expand_or_jump)
-  smap <C-a> <Plug>(neosnippet_expand_or_jump)
-  xmap <C-a> <Plug>(neosnippet_expand_target)
-  let g:neosnippet#enable_snipmate_compatibility = 1
-  let g:neosnippet#enable_completed_snippet = 1
-  let g:neosnippet#expand_word_boundary = 1
-'''
-
-[[plugins]]
 repo = 'szw/vim-tags'
 hook_add = '''
   if executable('ctags')
@@ -142,18 +145,6 @@ hook_add = '''
     let g:vim_tags_gems_tags_command = "{CTAGS} -R {OPTIONS} `" . GetDocker() . " bundle show --paths` 2>/dev/null"
     nnoremap <space>] :<C-u>tab stj <C-R>=expand('<cword>')<CR><CR>
   endif
-'''
-
-[[plugins]]
-repo = 'kassio/neoterm'
-rev = '2d8146d0d44df7e11d23068e43341128f4b8ffd7'
-hook_add = '''
-  nnoremap <silent> ,rf :TREPLSendFile<cr>
-  nnoremap <silent> ,rl :TREPLSendLine<cr>
-  vnoremap <silent> ,rl :TREPLSendSelection<cr>
-  nnoremap <silent> te :Ttoggle<cr>
-  nnoremap <silent> vs :terminal<cr>
-  tnoremap <silent> <C-[> <C-\><C-n>
 '''
 
 [[plugins]]
@@ -188,20 +179,22 @@ hook_add = '''
 '''
 
 [[plugins]]
-repo = 'autozimu/LanguageClient-neovim'
-rev = 'next'
-build = 'bash install.sh'
-hook_add = '''
-  set hidden
-  let g:LanguageClient_autoStart = 1
-  " vue language server javascript-typescript-language-server requirements
-  "   $ npm i -g tsc javascript-typescript-langserver vue-language-server
-  "   ### set experimentalDecorators option. for decorators error
-  "   $ echo '{ "compilerOptions": { "experimentalDecorators": true } }' > ~/tsconfig.json
-  let g:LanguageClient_serverCommands = {
-    \ 'vue': ['vls'],
-    \ 'typescript': ['javascript-typescript-stdio']
-    \ }
+repo = 'prabirshrestha/vim-lsp'
 
-  nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
+[[plugins]]
+repo = 'mattn/vim-lsp-settings'
+
+[[plugins]]
+repo = 'prabirshrestha/asyncomplete.vim'
+hook_add = '''
+  " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
+
+  imap <c-space> <Plug>(asyncomplete_force_refresh)
+  inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+  inoremap <expr> <cr>    pumvisible() ? asyncomplete#close_popup() : "\<cr>"
 '''
+
+[[plugins]]
+repo = 'prabirshrestha/asyncomplete-lsp.vim'
+

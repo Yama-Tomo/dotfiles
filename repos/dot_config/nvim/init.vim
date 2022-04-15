@@ -6,6 +6,10 @@ augroup MyAutoCmd
   autocmd!
 augroup END
 
+if !empty(glob('~/.volta/tools/image/packages/neovim/lib/node_modules/neovim/bin/cli.js'))
+  let g:node_host_prog = '~/.volta/tools/image/packages/neovim/lib/node_modules/neovim/bin/cli.js'
+endif
+
 if exists('g:nyaovim_version')
   let s:dein_cache_path = expand('~/.cache/nyaovim/dein')
 elseif has('nvim')

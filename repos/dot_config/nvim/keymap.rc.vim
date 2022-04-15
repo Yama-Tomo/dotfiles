@@ -32,7 +32,4 @@ nnoremap ) <C-w>>
 nnoremap + <C-w>+
 nnoremap - <C-w>-
 
-" ESC代用
-inoremap <silent> jj <ESC>
-
 nnoremap <Space>q :set number!<CR>
