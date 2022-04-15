@@ -23,3 +23,9 @@
   cm = commit
   cy = cherry-pick
   l = log
+
+[init]
+  defaultBranch = main
+
+[pager]
+  branch = false
