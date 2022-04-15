@@ -1,39 +1,43 @@
 #!/bin/bash
 
+# usage: ./setup.sh or ./setup.sh repos/bashrc repos/nvim ...
+
 dest=~/
 current=$(cd $(dirname $0);pwd)
 source=$current/repos
 
-files=$(ls $source)
+paths=$(ls $source)
 if [ $# -ne 0 ]; then
-  files="$@"
+  paths="$@"
 fi
 
-for file in $files
+for path in $paths
 do
-  file=`basename $file`
+  name=$(basename $path)
 
-  if [ "${file}" = "nvim" ]; then
-    ${current}/repos/dot_config/nvim/setup.sh
+  if [ -d $source/$name ]; then
+    if [ -e $source/$name/setup.sh ]; then
+      $source/$name/setup.sh
+      echo "$name done."
+    else
+      echo 'warn: '$name' `setup.sh` not found'
+    fi
+
     continue
   fi
 
+  file=$name
   if [ "$file" = "." -o "$file" = ".." -o ! -f "$source/$file" ]; then
     continue
   fi
 
   if [ ! -L $dest/$file ]; then
-    echo "######### $file ###########"
-
     if [ -f ~/.$file ]; then
       cp ~/.$file $current/org/$file
       rm ~/.$file
     fi
     ln -s $source/$file $dest/.$file
+
+    echo "$name done."
   fi
 done
-
-
-
-
-

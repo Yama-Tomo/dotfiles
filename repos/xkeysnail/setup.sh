@@ -1,6 +1,10 @@
 #!/bin/sh
-dirname=$(cd $(dirname $0);pwd)
+
+current=$(cd $(dirname $0);pwd)
+name=$(basename $current)
 
 cd ~/.config
-ln -s ${dirname} .
-
+if [ -e $name ]; then
+  mv $name $current/../../org/
+fi
+ln -s $current .
