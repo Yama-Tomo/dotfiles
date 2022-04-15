@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=xkeysnail
+Exec=.config/xkeysnail/startup.sh
+Icon=
+Terminal=false
