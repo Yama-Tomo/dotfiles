@@ -19,6 +19,7 @@ nnoremap <C-p> gT
 nnoremap fn :<C-u>tabnew<CR>
 nnoremap fw :<C-u>q<CR>
 nnoremap fo :<C-u>tabo<CR>:<C-u>q<CR>
+nnoremap fa :<C-u>qa<CR>
 
 " window分割
 nnoremap fs :<C-u>sp<CR>

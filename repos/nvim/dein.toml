@@ -31,8 +31,8 @@ hook_add = '''
 
   let s:denite_win_width_percent = 0.9
   let s:denite_win_height_percent = 0.5
-  let s:vvv = v:true
-  call denite#custom#option('default', {
+  function! s:denite_window_setting() abort
+    call denite#custom#option('default', {
       \ 'split': 'floating',
       \ 'winwidth': float2nr(&columns * s:denite_win_width_percent),
       \ 'wincol': float2nr((&columns - (&columns * s:denite_win_width_percent)) / 2),
@@ -42,9 +42,12 @@ hook_add = '''
       \ 'highlight_matched_range': "Search",
       \ 'match_highlight': v:true
       \ })
+  endfunction
+  call s:denite_window_setting()
+  autocmd VimResized * call s:denite_window_setting()
 
   nnoremap <silent> <space>b :<C-u>Denite buffer <CR>
-  nnoremap <silent> <space>l :<C-u>Denite tab  <CR>
+  nnoremap <silent> <space>l :<C-u>Denite tab <CR>
   nnoremap <silent> <space>y :<C-u>Denite neoyank <CR>
   nnoremap <silent> <space>h :<C-u>Denite file/old <CR>
 '''
@@ -53,24 +56,68 @@ hook_add = '''
 repo = 'Shougo/neoyank.vim'
 
 [[plugins]]
-repo = 'Shougo/unite.vim'
-
-[[plugins]]
-repo = 'Shougo/vimfiler.vim'
-depends = 'unite.vim'
+repo = 'Shougo/defx.nvim'
 hook_add = '''
-  let g:vimfiler_as_default_explorer = 1
-  let g:vimfiler_tree_opened_icon = "▾"
-  let g:vimfiler_tree_closed_icon = "▸"
-  let g:vimfiler_tree_leaf_icon = ' '
-  let g:vimfiler_safe_mode_by_default = 0
-  let g:vimfiler_enable_auto_cd = 1
-  let g:vimfiler_force_overwrite_statusline = 0
+  nnoremap <silent> <C-l> :<C-u> Defx `escape(expand('%:p:h'), ' :')` -search=`expand('%:p')` -toggle <CR>
+  nnoremap <silent> <C-space> :<C-u> Defx -toggle<CR>
 
-  nnoremap <silent> <space>e :VimFilerExplorer -toggle<CR>
-  nnoremap <silent> <space>n :VimFilerExplorer -find -status<CR>
-  autocmd BufEnter * if (winnr('$') == 1 && &filetype ==# 'vimfiler') | q | endif
-  autocmd FileType vimfiler nnoremap <silent><buffer><expr> tn vimfiler#do_action('tabopen')
+  autocmd FileType defx call s:defx_settings()
+
+  autocmd FileType * set nu
+  autocmd FileType defx,denite,denite-filter set nonu nornu
+
+  let g:defx_icons_enable_syntax_highlight = 1
+  let s:defx_win_width_percent = 0.95
+  let s:defx_win_height_percent = 0.8
+  let s:filer_width = 55
+
+  function! s:defx_window_setting() abort
+    call defx#custom#option('_', {
+      \ 'split': "floating",
+      \ 'resume': v:true,
+      \ 'vertical_preview': v:true,
+      \ 'floating_preview': v:true,
+      \ 'preview_width': float2nr(&columns * s:defx_win_width_percent - s:filer_width),
+      \ 'preview_height': float2nr(&lines * s:defx_win_height_percent),
+      \ 'wincol': float2nr((&columns - (&columns * s:defx_win_width_percent)) / 2),
+      \ 'winrow': float2nr((&lines - (&lines * s:defx_win_height_percent)) / 2),
+      \ 'winwidth': s:filer_width,
+      \ 'winheight': float2nr(&lines * s:defx_win_height_percent),
+      \ })
+  endfunction
+  call s:defx_window_setting()
+  autocmd VimResized * call s:defx_window_setting()
+
+  call defx#custom#column('icon', {
+    \ 'directory_icon': '▸ ',
+    \ 'opened_icon': '▾ ',
+    \ 'file_icon': '  ',
+    \ })
+
+  function! s:defx_settings() abort
+    nnoremap <silent><buffer><expr> <CR> defx#is_directory() ? defx#do_action('open') : defx#do_action('multi', ['quit', 'open'])
+    nnoremap <silent><buffer><expr> . defx#do_action('toggle_ignored_files')
+    nnoremap <silent><buffer><expr> u defx#do_action('cd', ['..']) . defx#do_action('open_tree')
+    nnoremap <silent><buffer><expr> l defx#is_directory() ? defx#do_action('open_tree') : defx#do_action('multi', ['quit', 'open'])
+    nnoremap <silent><buffer><expr> h defx#do_action('close_tree')
+    nnoremap <silent><buffer><expr> P defx#do_action('preview')
+    nnoremap <silent><buffer><expr> q defx#do_action('quit')
+    nnoremap <silent><buffer><expr> j line('.') == line('$') ? 'gg' : 'j' . defx#do_action('preview')
+    nnoremap <silent><buffer><expr> k line('.') == 1 ? 'G' : 'k' . defx#do_action('preview')
+    nnoremap <silent><buffer><expr> N defx#do_action('new_file')
+    nnoremap <silent><buffer><expr> d defx#do_action('remove')
+    nnoremap <silent><buffer><expr> yy defx#do_action('yank_path')
+    nnoremap <silent><buffer><expr> x defx#do_action('execute_system')
+    nnoremap <silent><buffer><expr> r defx#do_action('rename')
+    nnoremap <silent><buffer><expr> c defx#do_action('copy')
+    nnoremap <silent><buffer><expr> p defx#do_action('paste')
+    nnoremap <silent><buffer><expr> D defx#do_action('new_directory')
+    nnoremap <silent><buffer><expr> m defx#do_action('move')
+    nnoremap <silent><buffer><expr> s defx#do_action('multi', ['quit', ['open', 'split']])
+    nnoremap <silent><buffer><expr> v defx#do_action('multi', ['quit', ['open', 'vsplit']])
+    nnoremap <silent><buffer><expr> t defx#do_action('open', 'tabnew')
+    nnoremap <silent><buffer><expr> ~ defx#do_action('cd') " ホームディレクトリに移動する
+  endfunction
 '''
 
 [[plugins]]
@@ -180,6 +227,10 @@ hook_add = '''
 
 [[plugins]]
 repo = 'prabirshrestha/vim-lsp'
+hook_add = '''
+  nnoremap <silent><M-b> :<C-u> LspDefinition <CR>
+  nnoremap <silent><M-r> :<C-u> LspRename <CR>
+'''
 
 [[plugins]]
 repo = 'mattn/vim-lsp-settings'
@@ -187,8 +238,6 @@ repo = 'mattn/vim-lsp-settings'
 [[plugins]]
 repo = 'prabirshrestha/asyncomplete.vim'
 hook_add = '''
-  " let g:asyncomplete_log_file = expand('~/asyncomplete.log')
-
   imap <c-space> <Plug>(asyncomplete_force_refresh)
   inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
   inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
